@@ -37,4 +37,4 @@ tests: tox
 	$(VENV)/bin/tox
 
 tests-once: install-dev
-	$(VENV)/bin/nosetests -s --with-coverage --cover-min-percentage=100 --cover-package=kinto_hawk kinto_hawk
+	$(VENV)/bin/py.test --cov-report term-missing --cov-fail-under 100 --cov kinto_hawk

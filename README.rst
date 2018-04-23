@@ -26,7 +26,6 @@ It provides:
 
 * An authentication policy class;
 * Integration with *Kinto* cache backend for token verifications;
-* Integration with *Kinto* for heartbeat view checks;
 * Some optional endpoints to perform to grab a new Hawk session.
 
 * `Kinto documentation <http://kinto.readthedocs.io/en/latest/>`_
