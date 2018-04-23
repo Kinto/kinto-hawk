@@ -76,10 +76,6 @@ class HawkAuthenticationPolicy(CallbackAuthenticationPolicy):
         """Check storage for the request account HAWK credentials.
         """
         if REIFY_KEY not in request.bound_data:
-            kwargs = {}
-            kwargs['content'] = request.body or ''
-            kwargs['content_type'] = request.headers.get('Content-Type', '')
-
             try:
                 request.receiver = Receiver(partial(self.lookup_credentials, request),
                                             request.headers['Authorization'],
@@ -87,7 +83,8 @@ class HawkAuthenticationPolicy(CallbackAuthenticationPolicy):
                                             request.method,
                                             seen_nonce=partial(self.seen_nonce, request),
                                             accept_untrusted_content=True,
-                                            **kwargs)
+                                            content=request.body or '',
+                                            content_type=request.headers.get('Content-Type', ''))
             except HawkFail as e:
                 request.bound_data[REIFY_KEY] = None
             except TokenExpired as expiry:

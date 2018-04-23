@@ -1,4 +1,3 @@
-import codecs
 import os
 
 from kinto.core import Service, utils
