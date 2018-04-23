@@ -38,3 +38,6 @@ tests: tox
 
 tests-once: install-dev
 	$(VENV)/bin/py.test --cov-report term-missing --cov-fail-under 100 --cov kinto_hawk
+
+flake8: install-dev
+	$(VENV)/bin/flake8 kinto_hawk tests

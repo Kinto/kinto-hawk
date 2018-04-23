@@ -55,12 +55,12 @@ And configure authentication policy using `pyramid_multiauth
 
 ::
 
+    multiauth.policies = account hawk
+
     # Enable Account authenticated policy.
-    multiauth.policies = account
     multiauth.policy.account.use = kinto.plugins.accounts.authentication.AccountsAuthenticationPolicy
 
     # Enable Hawk authenticated policy.
-    multiauth.policies = hawk
     multiauth.policy.hawk.use = kinto_hawk.authentication.HawkAuthenticationPolicy
 
 By default, it will rely on the cache configured in *Kinto*.
