@@ -46,6 +46,7 @@ class HawkSessionTest(BaseWebTest, unittest.TestCase):
         resp = self.app.get('/', headers=request.headers)
         assert 'user' in resp.json
         assert resp.json['user']['id'] == 'account:alice'
+        assert 'Server-Authorization' in resp.headers
 
     def test_nonce_reuse_fails(self):
         request = mock.MagicMock(headers={},
