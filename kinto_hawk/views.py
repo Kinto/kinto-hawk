@@ -30,7 +30,7 @@ def hawk_sessions(request):
 
     settings = request.registry.settings
     hmac_secret = settings['userid_hmac_secret']
-    algorithm = settings.get('hawk.algorithm', 'sha256')
+    algorithm = settings['hawk.algorithm']
 
     token = os.urandom(32).hex()
 
@@ -39,7 +39,7 @@ def hawk_sessions(request):
 
     encoded_id = utils.hmac_digest(hmac_secret, credentials['id'].decode('utf-8'))
     cache_key = HAWK_SESSION_KEY.format(encoded_id)
-    cache_ttl = int(settings.get('hawk.session_ttl_seconds', 2613600))  # About 2 months
+    cache_ttl = int(settings['hawk.session_ttl_seconds'])
 
     session = utils.json.dumps({
         "key": credentials["key"],

@@ -1,14 +1,11 @@
 import mock
-import os
 import unittest
 
-from kinto.core import utils
 from kinto.core.testing import get_user_headers
 from kinto.plugins.accounts.scripts import create_user
 
 from requests_hawk import HawkAuth
 
-from kinto_hawk import HAWK_SESSION_KEY
 from . import BaseWebTest
 
 

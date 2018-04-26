@@ -44,13 +44,13 @@ class HawkAuthenticationPolicy(CallbackAuthenticationPolicy):
     def lookup_credentials(self, request, sender_id):
         settings = request.registry.settings
         hmac_secret = settings['userid_hmac_secret']
-        algorithm = settings.get('hawk.algorithm', 'sha256')
+        algorithm = settings['hawk.algorithm']
 
         cache_key = HAWK_SESSION_KEY.format(utils.hmac_digest(hmac_secret, sender_id))
         # Check cache to see if we know this session.
         cache = request.registry.cache
         session = cache.get(cache_key)
-        cache_ttl = int(settings.get('hawk.session_ttl_seconds', 2613600))  # About 2 months
+        cache_ttl = int(settings['hawk.session_ttl_seconds'])
 
         if session:
             cache.expire(cache_key, cache_ttl)
@@ -63,7 +63,7 @@ class HawkAuthenticationPolicy(CallbackAuthenticationPolicy):
 
     def seen_nonce(self, request, sender_id, nonce, timestamp):
         settings = request.registry.settings
-        cache_ttl = int(settings.get('hawk.nonce_ttl_seconds', 60))
+        cache_ttl = int(settings['hawk.nonce_ttl_seconds'])
         cache = request.registry.cache
         cache_key = 'hawk:{id}:{nonce}:{ts}'.format(id=sender_id, nonce=nonce, ts=timestamp)
         seen = cache.get(cache_key)
