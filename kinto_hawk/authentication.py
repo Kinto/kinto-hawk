@@ -44,20 +44,17 @@ class HawkAuthenticationPolicy(CallbackAuthenticationPolicy):
     def lookup_credentials(self, request, sender_id):
         settings = request.registry.settings
         hmac_secret = settings['userid_hmac_secret']
-        algorithm = settings.get('hawk.algorithm', 'sha256')
+        algorithm = settings['hawk.algorithm']
 
         cache_key = HAWK_SESSION_KEY.format(utils.hmac_digest(hmac_secret, sender_id))
         # Check cache to see if we know this session.
         cache = request.registry.cache
         session = cache.get(cache_key)
+        cache_ttl = int(settings['hawk.session_ttl_seconds'])
 
         if session:
-            try:
-                request.bound_data['info'] = utils.json.loads(session)
-            except ValueError:
-                cache.delete(cache_key)
-                raise LookupError('Invalid session data')
-
+            cache.expire(cache_key, cache_ttl)
+            request.bound_data['info'] = utils.json.loads(session)
             return {'id': sender_id,
                     'key': request.bound_data['info']['key'],
                     'algorithm': algorithm}
@@ -65,11 +62,13 @@ class HawkAuthenticationPolicy(CallbackAuthenticationPolicy):
         raise LookupError('unknown sender')
 
     def seen_nonce(self, request, sender_id, nonce, timestamp):
+        settings = request.registry.settings
+        cache_ttl = int(settings['hawk.nonce_ttl_seconds'])
         cache = request.registry.cache
         cache_key = 'hawk:{id}:{nonce}:{ts}'.format(id=sender_id, nonce=nonce, ts=timestamp)
         seen = cache.get(cache_key)
         if seen is None:
-            cache.set(cache_key, '', 300)  # XXX: Make this 300 a setting
+            cache.set(cache_key, '', cache_ttl)  # XXX: Make this 300 a setting
         return seen is not None
 
     def _verify_credentials(self, request):
@@ -85,10 +84,11 @@ class HawkAuthenticationPolicy(CallbackAuthenticationPolicy):
                                             accept_untrusted_content=True,
                                             content=request.body or '',
                                             content_type=request.headers.get('Content-Type', ''))
+            except TokenExpired as expiry:
+                request.bound_data[REIFY_KEY] = None
+                request.response.headers['WWW-Authenticate'] = expiry.www_authenticate
             except HawkFail as e:
                 request.bound_data[REIFY_KEY] = None
-            except TokenExpired as expiry:
-                request.response.headers['WWW-Authenticate'] = expiry.www_authenticate
             else:
                 request.bound_data[REIFY_KEY] = request.bound_data['info']['user_id']
 
