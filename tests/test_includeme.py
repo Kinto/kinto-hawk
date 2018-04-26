@@ -7,7 +7,7 @@ from . import BaseWebTest
 
 class CapabilityTestView(BaseWebTest, unittest.TestCase):
 
-    def test_fxa_capability(self, additional_settings=None):
+    def test_hawk_capability(self, additional_settings=None):
         resp = self.app.get('/')
         capabilities = resp.json['capabilities']
         assert 'hawk' in capabilities

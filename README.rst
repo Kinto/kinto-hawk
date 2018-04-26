@@ -47,21 +47,17 @@ Include the package in the project configuration:
 ::
 
     # Enable plugin.
-    kinto.includes = kinto.plugins.accounts
-	                 kinto_hawk
+    kinto.includes = kinto_hawk
 
 And configure authentication policy using `pyramid_multiauth
 <https://github.com/mozilla-services/pyramid_multiauth#deployment-settings>`_ formalism:
 
 ::
 
-    multiauth.policies = account hawk
+    multiauth.policies = account
 
-    # Enable Account authenticated policy.
-    multiauth.policy.account.use = kinto.plugins.accounts.authentication.AccountsAuthenticationPolicy
-
-    # Enable Hawk authenticated policy.
-    multiauth.policy.hawk.use = kinto_hawk.authentication.HawkAuthenticationPolicy
+    # Enable Hawk authenticated policy and name it account
+    multiauth.policy.account.use = kinto_hawk.authentication.HawkAuthenticationPolicy
 
 By default, it will rely on the cache configured in *Kinto*.
 
@@ -76,7 +72,9 @@ If necessary, override default values for authentication policy:
 
 ::
 
-    # multiauth.policy.hawk.realm = Realm
+    # multiauth.policy.account.realm = Realm
+    # hawk.nonce_ttl_seconds = 60  # A minute
+    # hawk.session_ttl_seconds = 2613600  # 2 months since last usage.
 
 
 How to create a user?
