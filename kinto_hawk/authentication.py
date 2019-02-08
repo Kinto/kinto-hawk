@@ -93,3 +93,10 @@ class HawkAuthenticationPolicy(CallbackAuthenticationPolicy):
                 request.bound_data[REIFY_KEY] = request.bound_data['info']['user_id']
 
         return request.bound_data[REIFY_KEY]
+
+
+@implementer(IAuthenticationPolicy)
+class AccountsAuthenticationPolicy(HawkAuthenticationPolicy):
+    # For some reason Kinto wants the authentication policy to be
+    # named like that.
+    pass
