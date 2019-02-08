@@ -87,7 +87,7 @@ class HawkAuthenticationPolicy(CallbackAuthenticationPolicy):
             except TokenExpired as expiry:
                 request.bound_data[REIFY_KEY] = None
                 request.response.headers['WWW-Authenticate'] = expiry.www_authenticate
-            except HawkFail as e:
+            except HawkFail:
                 request.bound_data[REIFY_KEY] = None
             else:
                 request.bound_data[REIFY_KEY] = request.bound_data['info']['user_id']

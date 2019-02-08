@@ -4,6 +4,4 @@ pytest-cache
 pytest-cov
 pytest-sugar
 pytest-xdist
-mock
-unittest2
 webtest
